@@ -23,7 +23,6 @@ export default {
         })
         .then(response => {
           this.rates = response.data;
-          console.log(this.rates)
         });
         
     }
