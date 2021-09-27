@@ -1,18 +1,26 @@
 <template>
-    <div>
+    <div class="bet_page" :class="isEnd ? 'complete_rate' : ''">
         <my-head>{{name}}</my-head>
-        <div>
-            Денег: {{count}}
-        </div>
-        <div>
-            Статус: {{statusid}}
+        <div class="flexwrap">
+            <div>
+                Денег: 
+                <span class="bold">
+                    {{count}}
+                </span>
+            </div>
+            <div class="status">
+                Статус: 
+                <span class="bold">
+                    {{isEnd ? 'Окончено' : 'Не окончено'}}
+                </span>
+            </div>
         </div>
 
         <table>
             <thead>
                 <tr>
                     <td>Имя</td>
-                    <td v-for="(rate,index) in getKeys()" :key="index">
+                    <td v-for="(rate,index) in getKeys()" :key="index" :class="(winInfo && items[0].rateInfo[rate].id === winInfo) ? 'win' : '' ">
                         {{rate}}
                     </td>
                 </tr>
@@ -27,7 +35,7 @@
                         {{rate.userName}}
                     </td>
                     <td @click="getRate(rateIn,rate)" v-for="rateIn in rate.rateInfo" :key="rateIn.id" class="ckeckedItem" :class="rateIn.status ? 'checked' : 'not_checked'">
-                        {{rateIn.status ? 'Выбрано' : ''}}
+                        {{rateIn.status ? 'x' : ''}}
                     </td>
                 </tr>
             </tbody>
@@ -45,6 +53,8 @@ export default {
             count: null,
             statusid: null,
             userInfo: null,
+            isEnd: null,
+            winInfo: null,
             items:[]
 
         }
@@ -57,9 +67,6 @@ export default {
             return rate.userID === this.userInfo.id;
         },
         madeRate(rate){
-            // console.log(rate.rateInfo)
-            // console.log()
-            // return rate.userID === this.userInfo.id;
             return Object.values(rate.rateInfo).some(el=>el.status);
         },
         getInfo(){
@@ -70,10 +77,17 @@ export default {
             })
             .then(response => {
                 this.info = response.data;
+                
                 this.name = this.info.rateinfo.name;
+                
                 this.count = this.info.rateinfo.count;
                 this.statusid = this.info.rateinfo.statusid;
                 this.userInfo = this.info.currentUser;
+                this.isEnd = this.statusid == 1 ? true : false;
+
+                this.winInfo = this.info.wininfo?.varid;
+                
+
                 this.items = [];
                 this.info.userinfo.forEach(el=>{
                     let tempEl = {
@@ -98,9 +112,9 @@ export default {
 
             if(rate.userID != this.userInfo.id) return false;
             if(this.madeRate(rate)) return false;
+            if(this.isEnd) return false;
 
-            // console.log(rateIn,rate)
-            // const rate = this.info.variations[index];
+
             const result = confirm('Ты уверен в ставке?');
             if(!result) return false;
             axios
@@ -121,29 +135,53 @@ export default {
 <style scoped>
     table{
         width: 100%;
+        max-width: 800px;
+        margin: auto;
         border-collapse: collapse;
+        background: rgb(235, 233, 233);
     }
     thead{
-        background: #ddd;
+        background: rgb(187, 187, 187);
     }
     td{
-        border: 1px solid;
+        border: 1px solid rgb(124, 124, 124);
+        text-align: center;
+        padding: .4em;
+    }
+    td:first-child{
+        text-align: left;
     }
     .checked{
         background: rgb(36, 53, 34);
         color: #fff;
     }
     .not_checked{
-        background: #fff;
+        /* background: #fff; */
     }
 
-    .current:not(.made) .ckeckedItem.not_checked{
+    .bet_page:not(.complete_rate) .current:not(.made) .ckeckedItem.not_checked{
         cursor: pointer;
     }
-    .current:not(.made) .ckeckedItem.not_checked:hover{
+    .bet_page:not(.complete_rate) .current:not(.made) .ckeckedItem.not_checked:hover{
        background: rgba(36, 53, 34,.3); 
     }
     .current{
-        background: #f00;
+        background: #fff;
+        font-weight: bold;
+    }
+    .flexwrap{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto 2em;
+    }
+    .bold{
+        font-weight: bold;
+    }
+    .win{
+        /* color: #f00; */
+        background: rgb(179, 255, 164);
     }
 </style>

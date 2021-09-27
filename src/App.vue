@@ -1,7 +1,7 @@
 <template>
   <div id="nav">
     <router-link to="/">Главная</router-link> |
-    <router-link to="/add">Добавить</router-link>
+    <router-link to="/add">Добавить ставку</router-link>
   </div>
   <router-view/>
 </template>
