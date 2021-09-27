@@ -1,30 +1,21 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Главная</router-link> |
-    <router-link to="/add">Добавить ставку</router-link>
-  </div>
-  <router-view/>
+  <site-head></site-head>
+  <router-view />
 </template>
-
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
+<script>
+import SiteHead from '@/components/SiteHead'
+export default {
+  components:{
+    SiteHead
   }
 }
+</script>
+<style lang="scss">
+  #app {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+  }
 </style>

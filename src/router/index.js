@@ -27,6 +27,11 @@ const routes = [
     name: 'Bet',
     component: () => import('../views/Bet.vue')
   },
+  {
+    path: '/user/:id',
+    name: 'User',
+    component: () => import('../views/User.vue')
+  },
 ]
 
 const router = createRouter({
