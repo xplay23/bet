@@ -6,15 +6,15 @@
 
         <div id="nav">
             <router-link to="/">Главная</router-link> |
-            <router-link to="/add" v-if="userIsLogin">Добавить ставку</router-link>
+            <router-link to="/add" v-if="this.$store.state.userIsLogin">Добавить ставку</router-link>
         </div>
         <div class="user">
-            <div v-if="userIsLogin">
-                <router-link class="link_inner" :to="{ name: 'User', params: { id: userInfo.id }}">
-                    <div v-if="userInfo.avatarInfo.path" class="avatar">
-                        <img :src="userInfo.avatarInfo.path" alt="">
+            <div v-if="this.$store.state.userIsLogin">
+                <router-link class="link_inner" :to="{ name: 'User', params: { id: this.$store.state.userInfo.id }}">
+                    <div v-if="this.$store.state.userInfo.avatarInfo.path" class="avatar">
+                        <img :src="this.$store.state.userInfo.avatarInfo.path" alt="">
                     </div>
-                    <span>{{userInfo.name}}</span>
+                    <span>{{this.$store.state.userInfo.name}}</span>
                 </router-link>
             </div>
             <div v-else>
@@ -32,25 +32,18 @@
 import axios from 'axios';
 export default {
     name: 'site-head',
-    data(){
-        return {
-            userIsLogin: null,
-            userInfo: {}
-        }
-    },
     mounted() {
          axios
             .post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
                 action: 'getUser'
             }).then((response)=>{
                 const data = response.data;
-                // console.log(data)
                 if(data.id){
-                    this.userIsLogin = true;
-                    this.userInfo = data;
+                    this.$store.state.userIsLogin = true;
+                    this.$store.state.userInfo = data;
                 }else{
-                    this.userIsLogin = false;
-                    this.userInfo = {};
+                    this.$store.state.userIsLogin = false;
+                    this.$store.state.userInfo = {};
 
                 }
             })
@@ -71,8 +64,10 @@ export default {
     }
   }
   .site_head{
-      display: flex;
-      align-items: center;
+        display: flex;
+        align-items: center;
+        max-width: 800px;
+        margin: auto;
   }
   .logo{
       width: 2.5em;

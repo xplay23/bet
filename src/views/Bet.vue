@@ -7,6 +7,13 @@
                 <span class="bold">
                     {{count}}
                 </span>
+                <br>
+                <div v-if="initiator">
+                    Инициатор: 
+                    <span class="bold">
+                        {{initiator.name}}
+                    </span>
+                </div>
             </div>
             <div class="status">
                 Статус: 
@@ -55,6 +62,7 @@ export default {
             userInfo: null,
             isEnd: null,
             winInfo: null,
+            initiator: null,
             items:[]
 
         }
@@ -77,7 +85,7 @@ export default {
             })
             .then(response => {
                 this.info = response.data;
-                
+                console.log(this.info);
                 this.name = this.info.rateinfo.name;
                 
                 this.count = this.info.rateinfo.count;
@@ -86,7 +94,17 @@ export default {
                 this.isEnd = this.statusid == 1 ? true : false;
 
                 this.winInfo = this.info.wininfo?.varid;
-                
+                // console.log(this.info.rateinfo.userid)
+                if(this.info.rateinfo.userid){
+                    axios
+                        .post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
+                            action: 'getUserById',
+                            userId: this.info.rateinfo.userid
+                        })
+                        .then(response => {
+                            this.initiator = response.data;
+                        });
+                }
 
                 this.items = [];
                 this.info.userinfo.forEach(el=>{
@@ -104,7 +122,7 @@ export default {
                     })
                     this.items.push(tempEl);
                 })
-                console.log('getInfo() => this.items',this.items);
+                // console.log('getInfo() => this.items',this.items);
                 
             });
         },
@@ -175,6 +193,7 @@ export default {
         justify-content: space-between;
         width: 100%;
         max-width: 800px;
+        text-align: left;
         margin: 0 auto 2em;
     }
     .bold{
