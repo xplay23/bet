@@ -1,6 +1,8 @@
 <template>
-  <site-head></site-head>
-  <router-view />
+  <div class="app">
+    <site-head></site-head>
+    <router-view />
+  </div>
 </template>
 <script>
 import SiteHead from '@/components/SiteHead'
@@ -20,5 +22,9 @@ export default {
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
+  }
+  .app{
+    max-width: 800px;
+    margin: auto;
   }
 </style>

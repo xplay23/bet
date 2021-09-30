@@ -38,6 +38,7 @@ export default {
                 action: 'getUser'
             }).then((response)=>{
                 const data = response.data;
+                console.log('getUser',data);
                 if(data.id){
                     this.$store.state.userIsLogin = true;
                     this.$store.state.userInfo = data;
