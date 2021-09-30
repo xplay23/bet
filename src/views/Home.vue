@@ -1,13 +1,16 @@
 <template>
   <div class="home">
-    <label>
-      <input type="checkbox" @change="filterRates" v-model="onlyMe">
-      Только те в которых могу учавствовать
-    </label>
-    <label>
-      <input type="checkbox" @change="filterRates" v-model="addComplete">
-      Отображать законченые
-    </label>
+    <div class="labels">
+      <label>
+        <input type="checkbox" @change="filterRates" v-model="onlyMe">
+        Только те в которых могу учавствовать
+      </label>
+      <br>
+      <label>
+        <input type="checkbox" @change="filterRates" v-model="addComplete">
+        Отображать законченые
+      </label>
+    </div>
     <div class="link" v-for="(rate,index) in ratesActive" :key="index" :class="rate.statusid == 1 ? 'complete' : ''">
       <router-link class="link__inner" :to="{ name: 'Bet', params: { id: rate.id }}">{{rate.name}}</router-link>
       <div class="link__money">
@@ -30,7 +33,7 @@ export default {
       rates: [],
       ratesActive: [],
       addComplete: false,
-      onlyMe: false,
+      onlyMe: true,
     }
   },
   methods:{
@@ -100,5 +103,8 @@ export default {
   .link__money img{
     width: 1.5em;
     margin-right: .5em;
+  }
+  .labels{
+    text-align: left;
   }
 </style>

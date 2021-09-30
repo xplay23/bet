@@ -47,7 +47,15 @@
                 </tr>
             </tbody>
         </table>
-
+        <div v-if="!isEnd">
+            <my-button v-if="!showWinScreen" @click="showEndRate">Завершить</my-button>
+            <div v-else>
+                победный вариант:
+                <div v-for="(rate,index) in this.info.variations" :key="index">
+                    <button @click="endRate(rate.id)">{{rate.name}}</button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 <script>
@@ -63,6 +71,7 @@ export default {
             isEnd: null,
             winInfo: null,
             initiator: null,
+            showWinScreen: false,
             items:[]
 
         }
@@ -143,7 +152,22 @@ export default {
                 }).then(()=>{
                     this.getInfo();
                 })
-        }
+        },
+        showEndRate(){
+            this.showWinScreen = true;
+        },
+        endRate(id){
+            const result = confirm('Ты уверен?');
+            if(!result) return false;
+            axios
+                .post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
+                    action: 'endBet',
+                    rateId: this.$route.params.id,
+                    varId: id
+                }).then(()=>{
+                    this.getInfo();
+                })
+        },
     },
     mounted() {
         this.getInfo();
