@@ -6,18 +6,18 @@
 
         <div id="nav">
             <router-link to="/">Главная</router-link> |
-            <router-link to="/add" v-if="this.$store.state.userIsLogin">Добавить ставку</router-link>
+            <router-link to="/add" v-if="userIsLogin">Добавить ставку</router-link>
         </div>
         <div class="user">
             <div v-if="this.$store.state.userIsLogin">
-                <router-link class="link_inner" :to="{ name: 'User', params: { id: this.$store.state.userInfo.id }}">
-                    <div v-if="this.$store.state.userInfo.avatarInfo.path" class="avatar">
-                        <img :src="this.$store.state.userInfo.avatarInfo.path" alt="">
+                <router-link class="link_inner" to="/user">
+                    <div v-if="userInfo?.avatarInfo?.path" class="avatar">
+                        <img :src="userInfo?.avatarInfo?.path" alt="">
                     </div>
-                    <span>{{this.$store.state.userInfo.name}}</span>
+                    <span>{{userInfo?.name}}</span>
                 </router-link>
             </div>
-            <div v-else>
+            <div v-else style="display: flex;">
                 <router-link class="link_inner" to="/register">
                     <span>Регистрация</span>
                 </router-link>
@@ -29,26 +29,20 @@
     </div>
 </template>
 <script>
-import axios from 'axios';
 export default {
     name: 'site-head',
-    mounted() {
-         axios
-            .post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
-                action: 'getUser'
-            }).then((response)=>{
-                const data = response.data;
-                console.log('getUser',data);
-                if(data.id){
-                    this.$store.state.userIsLogin = true;
-                    this.$store.state.userInfo = data;
-                }else{
-                    this.$store.state.userIsLogin = false;
-                    this.$store.state.userInfo = {};
-
-                }
-            })
+    data(){
+        return {
+            userInfo: null,
+            userIsLogin: null
+        }
     },
+    mounted(){
+        const info = this.$store.getters.getUserInfo;
+        this.userInfo = info.userInfo;
+        this.userIsLogin = info.userIsLogin;
+        console.log(info.userInfo)
+    }
 }
 </script>
 <style scoped lang="scss">

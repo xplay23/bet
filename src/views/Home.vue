@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div class="labels">
-      <label>
+      <label v-if="this.$store.state.userIsLogin">
         <input type="checkbox" @change="filterRates" v-model="onlyMe">
         Только те в которых могу учавствовать
       </label>
@@ -45,7 +45,7 @@ export default {
         }
         return true;
       }).filter(el=>{
-        if(this.onlyMe){
+        if(this.$store.state.userIsLogin && this.onlyMe){
           console.log(el.UserCanRate);
           return el.UserCanRate.some(elIn => elIn.usereid === this.$store.state.userInfo.id);
         }

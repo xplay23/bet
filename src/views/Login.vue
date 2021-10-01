@@ -53,6 +53,7 @@ export default {
                         this.error = data;
                         return false;
                     }
+                    this.$store.commit('login',data.token);
                     // this.$router.push({ name: 'User', params: { 'id': data.userid } });
                 })
         }

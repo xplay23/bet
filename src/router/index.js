@@ -28,9 +28,14 @@ const routes = [
     component: () => import('../views/Bet.vue')
   },
   {
-    path: '/user/:id',
+    path: '/user',
     name: 'User',
     component: () => import('../views/User.vue')
+  },
+  {
+    path: '/user/:id',
+    name: 'UserInfo',
+    component: () => import('../views/UserInfo.vue')
   },
 ]
 
