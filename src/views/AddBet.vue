@@ -61,15 +61,10 @@ export default {
     }
   },
   mounted() {
-    axios
-      .post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
-          action: 'getUser'
-      }).then((response)=>{
-          const data = response.data;
-          if(!data.id){
-             this.$router.push('/')
-          }
-      });
+    // console.log(this.$store.getters.getUserInfo)
+    if(!this.$store.getters.isLogin){
+      this.$router.push('/');
+    }
 
     axios
       .post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{

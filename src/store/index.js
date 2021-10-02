@@ -1,4 +1,5 @@
 import axios from 'axios'
+import router from '@/router'
 import { createStore } from 'vuex'
 import createPersistedState from "vuex-persistedstate";
 
@@ -15,11 +16,11 @@ export default createStore({
       this.dispatch('getUser',token);
     },
     setLogin(state,userInfo){
+      state.userInfo = userInfo;
+
       if(userInfo.id){
-        state.userInfo = userInfo;
         state.userIsLogin = true;
       }else{
-        state.userInfo = {};
         state.userIsLogin = false;
       }
     }
@@ -27,21 +28,34 @@ export default createStore({
   },
   getters:{
     getUserInfo(state){
-      return {
-        "userInfo":state.userInfo,
-        "userIsLogin":state.userIsLogin
-      }
-    }
+      return state.userInfo
+    },
+    isLogin(state){
+      return state.userIsLogin
+    },
+    getUserToken(state){
+      return state.token;
+    },
   },
   actions: {
-    getUser: async (context,token)=>{
-      const {data} = await axios.post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php', {
+    getUser: (context,token)=>{
+      axios.post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php', {
                   action: 'getUser',
                   token: token
+              }).then((resp)=>{
+                const data = resp.data
+                context.commit('setLogin', data);
               })
-      context.commit('setLogin', data);
-        
     },
+    unLogin(context){
+      axios.post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php', {
+                  action: 'unLogin',
+                  token: context.getters.getUserToken
+              })
+      context.commit('setLogin', {});
+      router.push('/');
+    },
+   
   },
   modules: {
 

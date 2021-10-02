@@ -5,17 +5,20 @@
         </router-link>
 
         <div id="nav">
-            <router-link to="/">Главная</router-link> |
-            <router-link to="/add" v-if="userIsLogin">Добавить ставку</router-link>
+            <router-link to="/">Главная</router-link>
+            <router-link to="/add" v-if="this.$store.getters.isLogin">Добавить ставку</router-link>
         </div>
         <div class="user">
-            <div v-if="this.$store.state.userIsLogin">
+            <div v-if="this.$store.getters.isLogin"  style="display: flex;">
                 <router-link class="link_inner" to="/user">
-                    <div v-if="userInfo?.avatarInfo?.path" class="avatar">
-                        <img :src="userInfo?.avatarInfo?.path" alt="">
+                    <div v-if="this.$store.getters.getUserInfo?.avatarInfo?.path" class="avatar">
+                        <img :src="this.$store.getters.getUserInfo?.avatarInfo?.path" alt="">
                     </div>
-                    <span>{{userInfo?.name}}</span>
+                    <span>{{this.$store.getters.getUserInfo?.name}}</span>
                 </router-link>
+                <button @click="this.$store.dispatch('unLogin')" class="link_inner">
+                    Выйти
+                </button>
             </div>
             <div v-else style="display: flex;">
                 <router-link class="link_inner" to="/register">
@@ -30,19 +33,7 @@
 </template>
 <script>
 export default {
-    name: 'site-head',
-    data(){
-        return {
-            userInfo: null,
-            userIsLogin: null
-        }
-    },
-    mounted(){
-        const info = this.$store.getters.getUserInfo;
-        this.userInfo = info.userInfo;
-        this.userIsLogin = info.userIsLogin;
-        console.log(info.userInfo)
-    }
+    name: 'site-head'
 }
 </script>
 <style scoped lang="scss">
@@ -52,7 +43,7 @@ export default {
     a {
       font-weight: bold;
       color: #2c3e50;
-
+      margin: 0 .3em;
       &.router-link-exact-active {
         color: #42b983;
       }
@@ -79,6 +70,7 @@ export default {
       transition: background 100ms;
       display: flex;
       align-items: center;
+      cursor: pointer;
       img{
           max-width: 100%;
           margin: auto;

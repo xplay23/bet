@@ -32,21 +32,19 @@ export default {
     return {
       rates: [],
       ratesActive: [],
-      addComplete: false,
-      onlyMe: true,
+      addComplete: true,
+      onlyMe: false,
     }
   },
   methods:{
     filterRates(){
       this.ratesActive = this.rates.filter(el=>{
-        // console.log(el);
         if(!this.addComplete){
           return el.statusid == 0;
         }
         return true;
       }).filter(el=>{
         if(this.$store.state.userIsLogin && this.onlyMe){
-          console.log(el.UserCanRate);
           return el.UserCanRate.some(elIn => elIn.usereid === this.$store.state.userInfo.id);
         }
         return true;

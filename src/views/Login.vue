@@ -54,7 +54,7 @@ export default {
                         return false;
                     }
                     this.$store.commit('login',data.token);
-                    // this.$router.push({ name: 'User', params: { 'id': data.userid } });
+                    this.$router.push('/user');
                 })
         }
     }
