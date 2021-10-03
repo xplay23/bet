@@ -117,6 +117,7 @@ export default {
           axios
               .post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
                   action: 'createBet',
+                  token: this.$store.getters.getUserToken,
                   name: this.rateName,
                   count: this.rateCount,
                   variations: this.rates,

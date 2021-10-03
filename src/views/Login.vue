@@ -47,7 +47,7 @@ export default {
                     password: this.password
 
                 }).then((response)=>{
-                    console.log(response.data)
+                    // console.log(response.data)
                     const data = response.data;
                     if(data.errorId){
                         this.error = data;

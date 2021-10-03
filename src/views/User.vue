@@ -1,27 +1,26 @@
 <template>
-    <h2>
-        {{this.$store.getters.getUserInfo?.name}}
-    </h2>
-    <h4>
-        {{this.$store.getters.getUserInfo?.login}}
-    </h4>
-    <div>
-        Созданые мною
-        <div v-for="rate in rates" :key="rate.id">
-            <router-link class="link__inner" :to="{ name: 'Bet', params: { id: rate.id }}">{{rate.name}}</router-link>
+    <div class="user_info">
+        <my-head>
+            {{this.$store.getters.getUserInfo?.name}}
+        </my-head>
+        <h4>
+            {{this.$store.getters.getUserInfo?.login}}
+        </h4>
+        <div>
+            Счет = <strong>{{allWinCashe - allLooseCashe}}</strong>
         </div>
     </div>
     <div>
-        Выиграные
-        <div v-for="rate in winRates" :key="rate.id">
-            <router-link class="link__inner" :to="{ name: 'Bet', params: { id: rate.id }}">{{rate.name}}</router-link>
-        </div>
+        <h4>Созданые мною (<strong>{{rates.length}}</strong>)</h4>
+        <rate-item class="link" v-for="rate in rates" :rate="rate" :key="rate.id" />
     </div>
     <div>
-        Проигранные
-        <div v-for="rate in loseRates" :key="rate.id">
-            <router-link class="link__inner" :to="{ name: 'Bet', params: { id: rate.id }}">{{rate.name}}</router-link>
-        </div>
+        <h4>Выиграные (<strong>{{winRates.length}}</strong>)</h4>
+        <rate-item class="link" v-for="rate in winRates" :rate="rate" :key="rate.id" />
+    </div>
+    <div>
+        <h4>Проигранные (<strong>{{loseRates.length}}</strong>)</h4>
+        <rate-item class="link" v-for="rate in loseRates" :rate="rate" :key="rate.id" />
     </div>
 </template>
 <script>
@@ -32,6 +31,8 @@ export default {
             rates: [],
             winRates:[],
             loseRates:[],
+            allWinCashe:0,
+            allLooseCashe:0,
         }
     },
     mounted(){
@@ -48,6 +49,9 @@ export default {
                 token: this.$store.getters.getUserToken
             }).then(resp=>{
                 this.winRates = resp.data.length ? resp.data : [];
+                this.allWinCashe =  this.winRates.reduce((previousValue, currentValue)=>{
+                    return previousValue + parseInt(currentValue.count);
+                },0);
             });
 
         axios.post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php', {
@@ -55,7 +59,23 @@ export default {
                 token: this.$store.getters.getUserToken
             }).then(resp=>{
                 this.loseRates = resp.data.length ? resp.data : [];
+                this.allLooseCashe =  this.loseRates.reduce((previousValue, currentValue)=>{
+                    return previousValue + parseInt(currentValue.count);
+                },0);
             });
+
     }
 }
 </script>
+
+<style scoped>
+    .user_info{
+        text-align: left;
+    }
+    h4{
+        text-align: left;
+        font-size: 1.3em;
+        font-weight: bold;
+        margin-bottom: .2em;
+    }
+</style>

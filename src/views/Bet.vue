@@ -1,6 +1,7 @@
 <template>
     <div class="bet_page" :class="isEnd ? 'complete_rate' : ''">
         <my-head>{{name}}</my-head>
+
         <div class="flexwrap">
             <div>
                 Денег: 
@@ -28,7 +29,7 @@
                 <tr>
                     <td>Имя</td>
                     <td v-for="(rate,index) in getKeys()" :key="index" :class="(winInfo && items[0].rateInfo[rate].id === winInfo) ? 'win' : '' ">
-                        {{rate}}
+                        {{this.items[0].rateInfo[rate].name}}
                     </td>
                 </tr>
             </thead>
@@ -90,11 +91,12 @@ export default {
             axios
             .post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
                 action: 'withdrawRate',
-                rateId: this.$route.params.id
+                rateId: this.$route.params.id,
+                token: this.$store.getters.getUserToken,
             })
             .then(response => {
                 this.info = response.data;
-                console.log(this.info);
+                console.log('this.info.variations',this.info.variations);
                 this.name = this.info.rateinfo.name;
                 
                 this.count = this.info.rateinfo.count;
@@ -124,8 +126,9 @@ export default {
                     };
 
                     this.info.variations.forEach(elIn=>{
-                        tempEl['rateInfo'][elIn.name] = {
+                        tempEl['rateInfo'][elIn.id] = {
                             'status': this.info.uservariations.some(elSome=> (elSome['userid'] === el.id && elSome['varid'] === elIn.id)),
+                            'name': elIn.name,
                             'id': elIn.id
                         };
                     })
@@ -148,7 +151,8 @@ export default {
                 .post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
                     action: 'placeBet',
                     rateId: this.$route.params.id,
-                    varId: rateIn.id
+                    varId: rateIn.id,
+                    token: this.$store.getters.getUserToken,
                 }).then(()=>{
                     this.getInfo();
                 })
