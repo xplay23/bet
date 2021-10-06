@@ -33,7 +33,10 @@
 </template>
 <script>
 export default {
-    name: 'site-head'
+    name: 'site-head',
+    mounted(){
+        // console.log(this.$store.getters.getUserInfo);
+    }
 }
 </script>
 <style scoped lang="scss">
