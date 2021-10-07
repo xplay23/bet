@@ -17,7 +17,6 @@ export default createStore({
     },
     setLogin(state,userInfo){
       state.userInfo = userInfo;
-      console.log('state.userInfo ',state.userInfo)
       if(userInfo.id){
         state.userIsLogin = true;
       }else{
@@ -38,13 +37,16 @@ export default createStore({
     },
   },
   actions: {
-    getUser: (context,token)=>{
+    getUser: (context,info)=>{
       axios.post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php', {
                   action: 'getUser',
-                  token: token
+                  token: info.token
               }).then((resp)=>{
                 const data = resp.data
                 context.commit('setLogin', data);
+                if(info.cb){
+                  info.cb();
+                }
               })
     },
     unLogin(context){
@@ -54,6 +56,26 @@ export default createStore({
               })
       context.commit('setLogin', {});
       router.push('/');
+    },
+    login(context,formInfo){
+      axios
+        .post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
+            action: 'login',
+            login: formInfo.login,
+            password: formInfo.password
+        }).then((response)=>{
+            const data = response.data;
+            if(data.errorId){
+                return false;
+            }
+            context.dispatch('getUser',{
+              token: data['token'],
+              cb: function(){
+                router.push('/user');
+              }
+            })
+
+        })
     },
    
   },

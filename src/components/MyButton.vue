@@ -20,5 +20,9 @@ export default {
         &:hover{
             background: rgb(138, 139, 36);
         }
+        &.active{
+            background: rgb(138, 139, 36);
+            cursor: default;
+        }
     }
 </style>

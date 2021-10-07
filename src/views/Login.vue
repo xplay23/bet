@@ -3,14 +3,13 @@
         <my-head>Логин</my-head>
         <div class="form">
             <my-input type="text" v-model:value="login" placeholder="Логин" />
-            <my-input id="pass" v-model:value="password" type="text" placeholder="Пароль" />
+            <my-input id="pass" v-model:value="password" type="password" placeholder="Пароль" />
             <div class="error">{{error.errorText}}</div>
             <my-button @click="register">Отправить</my-button>
         </div>
     </div>
 </template>
 <script>
-import axios from 'axios'
 export default {
     data(){
         return {
@@ -39,31 +38,28 @@ export default {
                 alert('Введи пароль');
                 return false;
             }
-            axios
-                .post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
 
-                    action: 'login',
-                    login: this.login,
-                    password: this.password
-
-                }).then((response)=>{
-                    // console.log(response.data)
-                    const data = response.data;
-                    if(data.errorId){
-                        this.error = data;
-                        return false;
-                    }
-                    this.$store.commit('login',data.token);
-                    this.$router.push('/user');
-                })
+            this.$store.dispatch('login',{
+                login:this.login,
+                password:this.password
+            });
         }
     }
 }
 </script>
 <style lang="scss" scoped>
     .form{
-        max-width: 250px;
+        max-width: 300px;
         margin: auto;
+        padding: 1.4em;
+        border: 1px solid #ccc;
+        border-radius: 0.6em;
+    }
+    label{
+        display: block;
+        text-align: left;
+        font-size: .8em;
+        margin: 1em 0;
     }
     label{
         display: block;

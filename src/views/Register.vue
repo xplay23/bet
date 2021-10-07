@@ -4,14 +4,16 @@
         <div class="form">
             <my-input type="text" v-model:value="name" placeholder="Имя" />
             <my-input type="text" v-model:value="login" placeholder="Логин" />
-            <my-input id="pass" v-model:value="password" type="text" placeholder="Пароль" />
+            <my-input id="pass" v-model:value="password" type="password" placeholder="Пароль" />
             <div class="error">{{error.errorText}}</div>
             <label for="pass">
                 пароль вбирай не из тех которые юзаешь где-то, ибо в базе можно глянуть
             </label>
-            Аватарка
+            <div class="mini_head">Аватарка</div>
             <img v-if="img" :src="img" alt="">
-            <input type="file" ref="file" @change="loadAvatar">
+            <label class="input_file">
+                <input type="file" ref="file" @change="loadAvatar">
+            </label>
             <my-button @click="register">Отправить</my-button>
         </div>
     </div>
@@ -51,7 +53,6 @@ export default {
                 }else{
                     this.img = response.data.url;
                     this.avatarId = response.data.avatarId;
-                    console.log(response.data.avatarId);
                 }
 
             });
@@ -109,7 +110,11 @@ export default {
                         this.error = data;
                         return false;
                     }
-                    this.$router.push({ name: 'User', params: { 'id': data.userid } });
+                    this.$store.dispatch('login',{
+                        login:this.login,
+                        password:this.password
+                    });
+                    // this.$router.push({ name: 'User', params: { 'id': data.userid } });
                 })
         }
     }
@@ -117,8 +122,14 @@ export default {
 </script>
 <style lang="scss" scoped>
     .form{
-        max-width: 250px;
+        max-width: 300px;
         margin: auto;
+        padding: 1.4em;
+        border: 1px solid #ccc;
+        border-radius: 0.6em;
+        img{
+            max-width: 100%;
+        }
     }
     label{
         display: block;
@@ -129,29 +140,12 @@ export default {
     .error{
         color: #f00;
     }
-    .avatar{
-        display: flex;
-        align-items: flex-start;
-        flex-wrap: wrap;
-        // overflow-x: auto;
-        input{
-            opacity: 0;
-            position: absolute;
-            &:checked ~ img{
-                filter: drop-shadow(0 0 .4em #000)
-            }
-        }
-        label{
-            position: relative;
-            flex-shrink: 0;
-            cursor: pointer;
-        }
-        img{
-            filter: drop-shadow(0 0 .4em rgba(#000,0));
-            transition: filter 200ms;
-            width: 40px;
-            height: 40px;
-            object-fit: contain;
-        }
+    [type="file"]{
+        margin-bottom: 1em;
+    }
+    .mini_head{
+        text-align: left;
+        font-weight: bold;
+        margin-bottom: .4em;
     }
 </style>

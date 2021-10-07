@@ -1,15 +1,11 @@
 <template>
   <div class="home">
+    <my-head>Главная страница</my-head>
     <div class="labels">
-      <label v-if="this.$store.state.userIsLogin">
-        <input type="checkbox" @change="filterRates" v-model="onlyMe">
-        Только те в которых могу учавствовать
-      </label>
-      <br>
-      <label>
-        <input type="checkbox" @change="filterRates" v-model="addComplete">
-        Отображать законченые
-      </label>
+      <my-button :class="type==='all' ? 'active' : ''" @click="changeTab('all')">Все</my-button>
+      <my-button :class="type==='my' ? 'active' : ''" v-if="this.$store.getters.isLogin" @click="changeTab('my')">Доступные мне</my-button>
+      <my-button :class="type==='complete' ? 'active' : ''" @click="changeTab('complete')">Законченые</my-button>
+
     </div>
     <rate-item class="link" v-for="(rate,index) in ratesActive" :rate="rate" :key="index" />
   </div>
@@ -24,37 +20,41 @@ export default {
     return {
       rates: [],
       ratesActive: [],
-      addComplete: true,
-      onlyMe: false,
+      type: 'all'
     }
   },
   methods:{
-    filterRates(){
-      this.ratesActive = this.rates.filter(el=>{
-        if(!this.addComplete){
-          return el.statusid == 0;
-        }
-        return true;
-      }).filter(el=>{
-        if(this.$store.state.userIsLogin && this.onlyMe){
-          return el.UserCanRate.some(elIn => elIn.usereid === this.$store.state.userInfo.id);
-        }
-        return true;
-      });
-    }
+    changeTab(type){
+      this.type = type;
+      switch(type){
+        case 'complete':
+          this.ratesActive = this.rates.filter(el=>{
+              return el.statusid == 1;
+          })
+          break;
+        case 'my':
+          this.ratesActive = this.rates.filter(el=>{
+              return el.UserCanRate.some(elIn => elIn.usereid === this.$store.getters.getUserInfo.id);
+          });
+          break;
+        default:
+          this.ratesActive = this.rates;
+          break;
+      }
+    },
   },
-   mounted() {
-      axios
-        .post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
-          action: 'history'
-        })
-        .then(response => {
-          this.rates = response.data;
-          this.filterRates();
-        });
-     
-        
-    }
+  mounted() {
+    axios
+      .post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
+        action: 'history'
+      })
+      .then(response => {
+        this.rates = response.data;
+        this.changeTab('all')
+      });
+    
+      
+  }
 }
 </script>
 <style scoped>
@@ -62,7 +62,9 @@ export default {
     max-width: 800px;
     margin: auto;
   }
-
+  .link{
+    transition: opacity .3s ease;
+  }
   .labels{
     text-align: left;
   }

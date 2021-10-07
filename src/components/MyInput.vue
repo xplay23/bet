@@ -31,6 +31,7 @@ export default {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
+        margin: 0 0 .4em;
         span{
             font-size: .8em;
         }
@@ -38,6 +39,7 @@ export default {
     input{
         font-size: 14px;
         border: none;
+        width: 100%;
         border-bottom: 1px solid #ccc;
         padding: 0.5em 2.5em .5em .3em;
         background: url(../assets/pencil.svg) right .5em center/1em no-repeat;

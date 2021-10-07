@@ -6,6 +6,9 @@
         <span>
           {{rate.count}}
         </span>
+        <span class="createdate">
+          {{rate.createdate}}
+        </span>
       </div>
     </div>
 </template>
@@ -31,6 +34,7 @@ export default {
     border: 1px solid rgb(124, 124, 124);
     display: flex;
     align-items: flex-start;
+    position: relative;
   }
   .link__inner{
     color: #000;
@@ -51,5 +55,11 @@ export default {
   .link__money img{
     width: 1.5em;
     margin-right: .5em;
+  }
+  .createdate{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    font-size: .7em;
   }
 </style>

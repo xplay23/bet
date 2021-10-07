@@ -5,7 +5,6 @@
         </router-link>
 
         <div id="nav">
-            <router-link to="/">Главная</router-link>
             <router-link to="/add" v-if="this.$store.getters.isLogin">Добавить ставку</router-link>
         </div>
         <div class="user">
