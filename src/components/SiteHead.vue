@@ -6,10 +6,11 @@
 
         <div id="nav">
             <router-link to="/add" v-if="this.$store.getters.isLogin">Добавить ставку</router-link>
+            <router-link to="/leaderboard">Таблица лидеров</router-link>
         </div>
         <div class="user">
             <div v-if="this.$store.getters.isLogin"  style="display: flex;">
-                <router-link class="link_inner" to="/user">
+                <router-link class="link_inner username" to="/user">
                     <div v-if="this.$store.getters.getUserInfo?.avatarInfo?.path" class="avatar">
                         <img :src="this.$store.getters.getUserInfo?.avatarInfo?.path" alt="">
                     </div>
@@ -46,6 +47,8 @@ export default {
       font-weight: bold;
       color: #2c3e50;
       margin: 0 .3em;
+      padding: .3em;
+      display: inline-block;
       &.router-link-exact-active {
         color: #42b983;
       }
@@ -60,7 +63,9 @@ export default {
   .logo{
       width: 2.5em;
       img{
-          max-width: 100%;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
       }
   }
   .link_inner{
@@ -74,7 +79,9 @@ export default {
       align-items: center;
       cursor: pointer;
       img{
-          max-width: 100%;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
           margin: auto;
       }
       &:hover{
@@ -82,12 +89,29 @@ export default {
       }
   }
   .avatar{
-      padding: .1em;
+    //   padding: .1em;
       border: 1px solid #ccc;
       margin-right: 1em;
       width: 1.5em;
       display: flex;
       border-radius: 50%;
       overflow: hidden;
+  }
+  @media (max-width: 768px) {
+    .site_head{
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+    #nav{
+        width: 100%;
+        order: 2;
+    }
+    .username{
+        span{
+            max-width: 5em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
   }
 </style>

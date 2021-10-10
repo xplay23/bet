@@ -65,7 +65,7 @@ export default {
     if(!this.$store.getters.isLogin){
       this.$router.push('/');
     }
-
+  // console.log(this.$store.state);
     axios
       .post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
           action: 'getAllUsers'
@@ -216,5 +216,10 @@ export default {
   }
   .ckecked{
     background: rgba(rgb(30, 255, 0),.05);
+  }
+  @media(max-width: 500px){
+    .rate_form{
+      flex-direction: column;
+    }
   }
 </style>

@@ -92,7 +92,7 @@
                 mysqli_query($conn,"INSERT INTO Variation (name,rateid) VALUES ('$value',".$id.")");
             }
             foreach ($participating as $key => $value) {
-                mysqli_query($conn,"INSERT INTO UserCanRate (usereid,rateid) VALUES ('$value',".$id.")");
+                mysqli_query($conn,"INSERT INTO UserCanRate (userid,rateid) VALUES ('$value',".$id.")");
             }
             $result['errorId'] = 0;
             $result['rateID'] = $id;
@@ -166,7 +166,7 @@
         $ratId = intval($ratId);
         $resultsIn = mysqli_query($conn,"SELECT * FROM `UserCanRate` WHERE rateid='$ratId'");
         foreach ($resultsIn as $resultIn) {
-            array_push($return, getUserById($resultIn['usereid']));
+            array_push($return, getUserById($resultIn['userid']));
         }
         return $return;
     }
@@ -263,46 +263,134 @@
         return json_encode($jsonArray,JSON_UNESCAPED_UNICODE);
     }
 
-    function winRates($token){
+    function winRatesByToken($token){
         global $conn;
-        $jsonArray = array();
         $id =  intval(getUser($token)['id']);
 
-        $results = mysqli_query($conn,"SELECT * FROM `Rate` WHERE statusid=1");
-        
-        foreach ($results as $result) {
-            $rateId = intval($result['id']);
-            $resultsWin = mysqli_query($conn,"SELECT * FROM `Win` WHERE rateid=$rateId LIMIT 1");
-            $vinId = intval($resultsWin->fetch_assoc()['varid']);
-            
-            $resultsUSer = mysqli_query($conn,"SELECT * FROM `UsersRate` WHERE rateid=$rateId AND varid=$vinId AND userid=$id LIMIT 1");
-
-            if($resultsUSer->num_rows > 0){
-                array_push($jsonArray,$result);
-            }
-        }
-        return json_encode($jsonArray,JSON_UNESCAPED_UNICODE);
+        return json_encode(winRates($id),JSON_UNESCAPED_UNICODE);
     }
 
-    function loseRates($token){
+    function winRates($id){
         global $conn;
         $jsonArray = array();
-        $id =  intval(getUser($token)['id']);
+        $rates = array();
+        $jsonArray['rates'] = array();
+        $jsonArray['count'] = array();
 
-        $results = mysqli_query($conn,"SELECT * FROM `Rate` WHERE statusid=1");
+        $results = mysqli_query($conn,"SELECT * FROM `Win`");
         
         foreach ($results as $result) {
-            $rateId = intval($result['id']);
-            $resultsWin = mysqli_query($conn,"SELECT * FROM `Win` WHERE rateid=$rateId LIMIT 1");
-            $vinId = intval($resultsWin->fetch_assoc()['varid']);
-            
-            $resultsUSer = mysqli_query($conn,"SELECT * FROM `UsersRate` WHERE rateid=$rateId AND varid=$vinId AND userid=$id LIMIT 1");
 
-            if($resultsUSer->num_rows < 1){
-                array_push($jsonArray,$result);
+            $varId = intval($result['varid']);
+
+            $resultsWin = mysqli_query($conn,"SELECT * FROM `UsersRate` WHERE userid=$id AND varid=$varId LIMIT 1");
+            $row = $resultsWin->fetch_assoc();
+
+            array_push($rates,$row['rateid']);
+        }
+        foreach ($rates as $key => $idInner) {
+            $resultsWin = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM `Rate` WHERE id=$idInner LIMIT 1"));
+            
+            if(!is_null($resultsWin)){
+                array_push($jsonArray['rates'],$resultsWin);
+                array_push($jsonArray['count'],$resultsWin['count']);
             }
         }
-        return json_encode($jsonArray,JSON_UNESCAPED_UNICODE);
+
+        return $jsonArray;
+    }
+
+    function loseRatesByToken($token){
+        global $conn;
+        $id =  intval(getUser($token)['id']);
+
+        return json_encode(loseRates($id),JSON_UNESCAPED_UNICODE);
+    }
+
+    function SQLToArray($sql,$key){
+        $return = array();
+        while ($inner = mysqli_fetch_assoc($sql)) {
+            if(!is_null($key)){
+                array_push($return,$inner[$key]);
+            }else{
+                array_push($return,$inner);
+            }
+        }
+        return $return;
+    }
+
+    function getWinRate($rate,$winArray){
+        $newValue = array_filter($winArray,function($k) use($rate){
+            return $rate['rateid'] == $k['rateid'] && $rate['varid'] == $k['varid'];
+        });
+        return array_shift($newValue)['rateid'];
+    }
+
+    function loseRates($id){
+        global $conn;
+        $jsonArray = array();
+        $jsonArray['rates'] = array();
+        $jsonArray['count'] = array();
+
+
+        $endRates = SQLToArray(mysqli_query($conn,"SELECT id FROM `Rate` WHERE statusid=1"),'id');
+
+        $canRate = SQLToArray(mysqli_query($conn,"SELECT rateid FROM `UserCanRate` WHERE userid=$id"),'rateid');
+
+        array_filter($endRates,function($k) use($canRate){
+            return in_array($k,$canRate);
+        });
+
+        $win = SQLToArray(mysqli_query($conn,"SELECT rateid,varid FROM `Win`"),null);
+
+        $userRates = SQLToArray(mysqli_query($conn,"SELECT rateid,varid FROM `UsersRate` WHERE userid=$id"),null);
+        $isWin = array();
+        foreach ($userRates as $userRate) {
+            array_push($isWin,getWinRate($userRate,$win) );
+        }
+        
+        $isWin = array_filter($isWin,function($k){
+            return $k != '';
+        });
+
+        $endRates = array_filter($endRates,function($k) use($isWin){
+            return !in_array($k,$isWin);
+        });
+
+        // var_dump($endRates);
+
+        foreach ($endRates as $key => $rate) {
+            $idInner = intval($rate);
+            $resultsWin = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM `Rate` WHERE id=$idInner LIMIT 1"));
+            
+            if(!is_null($resultsWin)){
+                array_push($jsonArray['rates'],$resultsWin);
+                array_push($jsonArray['count'],$resultsWin['count']);
+            }
+        }
+
+        return $jsonArray;
+    }
+
+    function leaderboard(){
+        global $conn;
+        $return = array();
+        
+        $users = SQLToArray(mysqli_query($conn,"SELECT id,name,login FROM `Users`"),null);
+        // var_dump($users);
+        foreach ($users as $user) {
+            $id = intval($user['id']);
+            $return[$user['login']] = array();
+            $wins = winRates($id)['count'];
+            $loose = loseRates($id)['count'];
+
+            $return[$user['login']]['name'] = $user['name'];
+            $return[$user['login']]['win'] = $wins;
+            $return[$user['login']]['loose'] = $loose;
+        }
+        // var_dump($return);
+
+        return $return;
     }
 
     function register($avatarid,$name,$login,$password){
@@ -326,6 +414,18 @@
         $jsonArray['userid'] = mysqli_insert_id($conn);
 
         return json_encode($jsonArray,JSON_UNESCAPED_UNICODE);
+    }
+
+    function updateAvatar($avatarid,$token){
+        global $conn;
+        $jsonArray = array();
+        
+        $userID = intval(getUser($token)['id']);
+        $avatarid = intval($avatarid);
+
+        var_dump($userID);
+        var_dump($avatarid);
+        var_dump(mysqli_query($conn,"UPDATE `Users` SET avatarid=$avatarid WHERE id=$userID"));
     }
 
     function gen_token() {
@@ -391,10 +491,10 @@
         echo myRates($_POST['token']);
     }
     if(getAction('winRates')){
-        echo winRates($_POST['token']);
+        echo winRatesByToken($_POST['token']);
     }
     if(getAction('loseRates')){
-        echo loseRates($_POST['token']);
+        echo loseRatesByToken($_POST['token']);
     }
     
     if(getAction('login')){
@@ -405,6 +505,9 @@
     }
     if(getAction('register')){
         echo register($_POST['avatarid'],$_POST['name'],$_POST['login'],$_POST['password']);
+    }
+    if(getAction('updateAvatar')){
+        updateAvatar($_POST['avatarid'],$_POST['token']);
     }
     if(getAction('getUserRate')){
         echo getUserRate($_POST['userId'],$_POST['rateId']);
@@ -423,6 +526,9 @@
     }
     if(getAction('getAvatars')){
         echo getAvatars();
+    }
+    if(getAction('leaderboard')){
+        echo json_encode(leaderboard(),JSON_UNESCAPED_UNICODE);
     }
 
     if($_FILES['file']['name']){

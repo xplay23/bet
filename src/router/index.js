@@ -33,9 +33,9 @@ const routes = [
     component: () => import('../views/User.vue')
   },
   {
-    path: '/user/:id',
-    name: 'UserInfo',
-    component: () => import('../views/UserInfo.vue')
+    path: '/leaderboard',
+    name: 'Leaderboard',
+    component: () => import('../views/Leaderboard.vue')
   },
 ]
 

@@ -11,9 +11,8 @@ export default createStore({
     token: ''
   },
   mutations: {
-    login(state,token){
+    setToken(state,token){
       state.token = token;
-      this.dispatch('getUser',token);
     },
     setLogin(state,userInfo){
       state.userInfo = userInfo;
@@ -22,7 +21,15 @@ export default createStore({
       }else{
         state.userIsLogin = false;
       }
-    }
+    },
+    setAvatar(state,avatarInfo){
+      state.userInfo = userInfo;
+      if(userInfo.id){
+        state.userIsLogin = true;
+      }else{
+        state.userIsLogin = false;
+      }
+    },
     
   },
   getters:{
@@ -37,18 +44,20 @@ export default createStore({
     },
   },
   actions: {
-    getUser: (context,info)=>{
+
+    getUser: (context,cb)=>{
       axios.post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php', {
                   action: 'getUser',
-                  token: info.token
+                  token: context.getters.getUserToken
               }).then((resp)=>{
                 const data = resp.data
                 context.commit('setLogin', data);
-                if(info.cb){
-                  info.cb();
+                if(cb){
+                  cb();
                 }
               })
     },
+
     unLogin(context){
       axios.post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php', {
                   action: 'unLogin',
@@ -57,6 +66,7 @@ export default createStore({
       context.commit('setLogin', {});
       router.push('/');
     },
+
     login(context,formInfo){
       axios
         .post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
@@ -65,16 +75,26 @@ export default createStore({
             password: formInfo.password
         }).then((response)=>{
             const data = response.data;
+            
             if(data.errorId){
                 return false;
             }
-            context.dispatch('getUser',{
-              token: data['token'],
-              cb: function(){
-                router.push('/user');
-              }
+            context.commit('setToken', data['token']);
+            
+            context.dispatch('getUser',function(){
+              router.push('/user');
             })
 
+        })
+    },
+    updateAvatar(context,avatarId){
+      axios
+        .post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
+            action: 'updateAvatar',
+            token: context.getters.getUserToken,
+            avatarid: avatarId
+        }).then(()=>{
+            context.dispatch('getUser');
         })
     },
    

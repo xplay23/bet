@@ -4,6 +4,10 @@
         <div class="form">
             <my-input type="text" v-model:value="name" placeholder="Имя" />
             <my-input type="text" v-model:value="login" placeholder="Логин" />
+            <my-input id="email" v-model:value="email" type="email" placeholder="Мыло" />
+            <label for="email">
+                Указывай рабочую почту
+            </label>
             <my-input id="pass" v-model:value="password" type="password" placeholder="Пароль" />
             <div class="error">{{error.errorText}}</div>
             <label for="pass">
@@ -26,6 +30,7 @@ export default {
             name: "",
             login: "",
             password: "",
+            email: "",
             file:'',
             img: null,
             avatarId: 0,
@@ -44,7 +49,7 @@ export default {
             axios.post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php', formData,
             {
                 headers: {
-                'Content-Type': 'multipart/form-data'
+                    'Content-Type': 'multipart/form-data'
                 }
             })
             .then( (response) => {
@@ -60,6 +65,9 @@ export default {
         valid(string,type){
             switch(type){
                 case 'name':
+                    return string.length > 1;
+                    break;
+                case 'email':
                     return string.length > 1;
                     break;
                 case 'login':
@@ -83,8 +91,16 @@ export default {
                 alert('Введи пароль');
                 return false;
             }
+            if(!this.email ){
+                alert('Введи пароль');
+                return false;
+            }
             if(!this.valid(this.name,'name')){
                 alert('Имя хотя бы 2 символа');
+                return false;
+            }
+            if(!this.valid(this.email,'email')){
+                alert('Вбей имейл, тока правильно, мне лень делать валидацию.');
                 return false;
             }
             if(!this.valid(this.login,'login')){
@@ -101,6 +117,7 @@ export default {
                     action: 'register',
                     avatarid: this.avatarId,
                     name: this.name,
+                    email: this.email,
                     login: this.login,
                     password: this.password
 

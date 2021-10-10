@@ -23,31 +23,32 @@
                 </span>
             </div>
         </div>
-
-        <table>
-            <thead>
-                <tr>
-                    <td>Имя</td>
-                    <td v-for="(rate,index) in getKeys()" :key="index" :class="(winInfo && items[0].rateInfo[rate].id === winInfo) ? 'win' : '' ">
-                        {{this.items[0].rateInfo[rate].name}}
-                    </td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(rate,index) in items" :key="index" 
-                    :class="[
-                        currentUser(rate) ? 'current' : '',
-                        madeRate(rate) ? 'made' : ''
-                    ]">
-                    <td>
-                        {{rate.userName}}
-                    </td>
-                    <td @click="getRate(rateIn,rate)" v-for="rateIn in rate.rateInfo" :key="rateIn.id" class="ckeckedItem" :class="rateIn.status ? 'checked' : 'not_checked'">
-                        {{rateIn.status ? 'x' : ''}}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="table_wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <td>Имя</td>
+                        <td v-for="(rate,index) in getKeys()" :key="index" :class="(winInfo && items[0].rateInfo[rate].id === winInfo) ? 'win' : '' ">
+                            {{this.items[0].rateInfo[rate].name}}
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(rate,index) in items" :key="index" 
+                        :class="[
+                            currentUser(rate) ? 'current' : '',
+                            madeRate(rate) ? 'made' : ''
+                        ]">
+                        <td>
+                            {{rate.userName}}
+                        </td>
+                        <td @click="getRate(rateIn,rate)" v-for="rateIn in rate.rateInfo" :key="rateIn.id" class="ckeckedItem" :class="rateIn.status ? 'checked' : 'not_checked'">
+                            {{rateIn.status ? 'x' : ''}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
         <div v-if="!isEnd">
             <my-button v-if="!showWinScreen" @click="showEndRate">Завершить</my-button>
             <div v-else>
@@ -179,9 +180,14 @@ export default {
 }
 </script>
 <style scoped>
+    .table_wrap{
+        max-width: 800px;
+        width: 100%;
+        overflow-x: auto;
+    }
     table{
         width: 100%;
-        max-width: 800px;
+        min-width: 800px;
         margin: auto;
         border-collapse: collapse;
         background: rgb(235, 233, 233);
