@@ -87,6 +87,22 @@ export default createStore({
 
         })
     },
+    reset(context,formInfo){
+      axios
+        .post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
+            action: 'reset',
+            login: formInfo.login,
+            password: formInfo.password
+        }).then((response)=>{
+            const data = response.data;
+            
+            if(data.errorId){
+                return false;
+            }
+            router.push('/login');
+
+        })
+    },
     updateAvatar(context,avatarId){
       axios
         .post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{

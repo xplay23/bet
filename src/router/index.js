@@ -23,6 +23,11 @@ const routes = [
     component: () => import('../views/Login.vue')
   },
   {
+    path: '/reset',
+    name: 'Reset',
+    component: () => import('../views/Reset.vue')
+  },
+  {
     path: '/bet/:id',
     name: 'Bet',
     component: () => import('../views/Bet.vue')
