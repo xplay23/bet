@@ -43,10 +43,10 @@ export default {
                 return false;
             }
 
-            this.$store.dispatch('login',{
+            console.log(this.$store.dispatch('login',{
                 login:this.login,
                 password:this.password
-            });
+            }));
         }
     }
 }

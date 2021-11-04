@@ -2,9 +2,9 @@
     <div>
         <my-head>Сброс пароля</my-head>
         <div class="form">
-            <my-input type="text" v-model:value="login" placeholder="Логин" />
+            <my-input type="text" v-model:value="password" placeholder="Пароль" />
             <div class="error">{{error.errorText}}</div>
-            <my-button @click="resetPass">Отправить</my-button>
+            <my-button @click="reset">Отправить</my-button>
         </div>
     </div>
 </template>
@@ -12,7 +12,7 @@
 export default {
     data(){
         return {
-            login: "",
+            password: "",
             error: {}
         }
     },
@@ -27,14 +27,15 @@ export default {
                     break;
             }
         },
-        resetPass(){
-            if(!this.login){
-                alert('Введи логин');
+        reset(){
+            if(!this.password){
+                alert('Введи пароль');
                 return false;
             }
 
-            this.$store.dispatch('resetPass',{
-                login:this.login,
+            this.$store.dispatch('changePass',{
+                password:this.password,
+                token: this.$route.params.token,
             });
         }
     }

@@ -26,7 +26,7 @@ export default {
     },
     mounted(){
 
-        axios.post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php', {
+        axios.post('https://devlink1.tk//bm/vue_lessons/betting_admin/index.php', {
                 action: 'leaderboard',
             }).then(resp=>{
                 if(Object.keys(resp.data).length < 1) return false;

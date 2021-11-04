@@ -46,7 +46,7 @@ export default createStore({
   actions: {
 
     getUser: (context,cb)=>{
-      axios.post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php', {
+      axios.post('https://devlink1.tk/bm/vue_lessons/betting_admin/index.php', {
                   action: 'getUser',
                   token: context.getters.getUserToken
               }).then((resp)=>{
@@ -59,17 +59,17 @@ export default createStore({
     },
 
     unLogin(context){
-      axios.post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php', {
-                  action: 'unLogin',
-                  token: context.getters.getUserToken
-              })
+      axios.post('https://devlink1.tk/bm/vue_lessons/betting_admin/index.php', {
+          action: 'unLogin',
+          token: context.getters.getUserToken
+      })
       context.commit('setLogin', {});
       router.push('/');
     },
 
     login(context,formInfo){
-      axios
-        .post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
+       axios
+        .post('https://devlink1.tk/bm/vue_lessons/betting_admin/index.php',{
             action: 'login',
             login: formInfo.login,
             password: formInfo.password
@@ -77,22 +77,40 @@ export default createStore({
             const data = response.data;
             
             if(data.errorId){
-                return false;
-            }
-            context.commit('setToken', data['token']);
-            
-            context.dispatch('getUser',function(){
-              router.push('/user');
-            })
+                // console.log(this,context,this.$root,this.$refs);
+                // this.$refs.error_popup.open(data.errorText);
+                return data;
+              }
+              context.commit('setToken', data['token']);
+              
+              context.dispatch('getUser',function(){
+                router.push('/user');
+              })
+              return data;
 
         })
     },
-    reset(context,formInfo){
+    resetPass(context,formInfo){
       axios
-        .post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
-            action: 'reset',
-            login: formInfo.login,
-            password: formInfo.password
+        .post('https://devlink1.tk/bm/vue_lessons/betting_admin/index.php',{
+            action: 'resetPass',
+            login: formInfo.login
+        }).then((response)=>{
+            const data = response.data;
+            
+            if(data.errorId){
+                return false;
+            }
+            // router.push('/changepass/'+data.token);
+
+        })
+    },
+    changePass(context,formInfo){
+      axios
+        .post('https://devlink1.tk/bm/vue_lessons/betting_admin/index.php',{
+            action: 'changePass',
+            password: formInfo.password,
+            token: formInfo.token,
         }).then((response)=>{
             const data = response.data;
             
@@ -105,7 +123,7 @@ export default createStore({
     },
     updateAvatar(context,avatarId){
       axios
-        .post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
+        .post('https://devlink1.tk/bm/vue_lessons/betting_admin/index.php',{
             action: 'updateAvatar',
             token: context.getters.getUserToken,
             avatarid: avatarId

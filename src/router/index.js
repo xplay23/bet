@@ -28,6 +28,11 @@ const routes = [
     component: () => import('../views/Reset.vue')
   },
   {
+    path: '/changepass/:token',
+    name: 'ChangePass',
+    component: () => import('../views/ChangePass.vue')
+  },
+  {
     path: '/bet/:id',
     name: 'Bet',
     component: () => import('../views/Bet.vue')

@@ -35,6 +35,7 @@
 export default {
     name: 'site-head',
     mounted(){
+        this.$store.dispatch('getUser');
         // console.log(this.$store.getters.getUserInfo);
     }
 }
@@ -93,6 +94,8 @@ export default {
       border: 1px solid #ccc;
       margin-right: 1em;
       width: 1.5em;
+      height: 1.5em;
+      flex-shrink: 0;
       display: flex;
       border-radius: 50%;
       overflow: hidden;

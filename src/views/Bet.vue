@@ -90,7 +90,7 @@ export default {
         },
         getInfo(){
             axios
-            .post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
+            .post('https://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
                 action: 'withdrawRate',
                 rateId: this.$route.params.id,
                 token: this.$store.getters.getUserToken,
@@ -109,7 +109,7 @@ export default {
                 // console.log(this.info.rateinfo.userid)
                 if(this.info.rateinfo.userid){
                     axios
-                        .post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
+                        .post('https://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
                             action: 'getUserById',
                             userId: this.info.rateinfo.userid
                         })
@@ -149,7 +149,7 @@ export default {
             const result = confirm('Ты уверен в ставке?');
             if(!result) return false;
             axios
-                .post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
+                .post('https://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
                     action: 'placeBet',
                     rateId: this.$route.params.id,
                     varId: rateIn.id,
@@ -165,7 +165,7 @@ export default {
             const result = confirm('Ты уверен?');
             if(!result) return false;
             axios
-                .post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
+                .post('https://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
                     action: 'endBet',
                     rateId: this.$route.params.id,
                     varId: id

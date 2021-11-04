@@ -2,8 +2,10 @@
   <div class="app">
     <site-head></site-head>
     <router-view />
+    <my-modal ref="error_popup"></my-modal>
   </div>
 </template>
+
 <script>
 import SiteHead from '@/components/SiteHead'
 export default {
@@ -12,6 +14,7 @@ export default {
   }
 }
 </script>
+
 <style lang="scss">
 *{
   box-sizing: border-box;

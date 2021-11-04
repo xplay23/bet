@@ -34,7 +34,7 @@ export default {
           break;
         case 'my':
           this.ratesActive = this.rates.filter(el=>{
-              return el.UserCanRate.some(elIn => elIn.usereid === this.$store.getters.getUserInfo.id);
+              return el.UserCanRate.some(elIn => parseInt(elIn.userid) === parseInt(this.$store.getters.getUserInfo.id));
           });
           break;
         default:
@@ -45,7 +45,7 @@ export default {
   },
   mounted() {
     axios
-      .post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
+      .post('https://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
         action: 'history'
       })
       .then(response => {

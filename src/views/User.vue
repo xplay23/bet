@@ -51,7 +51,7 @@ export default {
             let formData = new FormData();
             formData.append('file', this.file);
 
-            axios.post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php', formData,
+            axios.post('https://devlink1.tk//bm/vue_lessons/betting_admin/index.php', formData,
             {
                 headers: {
                     'Content-Type': 'multipart/form-data'
@@ -70,14 +70,14 @@ export default {
     },
     mounted(){
 
-        axios.post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php', {
+        axios.post('https://devlink1.tk//bm/vue_lessons/betting_admin/index.php', {
                 action: 'myRates',
                 token: this.$store.getters.getUserToken
             }).then(resp=>{
                 this.rates = resp.data.length ? resp.data : [];
             });
 
-        axios.post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php', {
+        axios.post('https://devlink1.tk//bm/vue_lessons/betting_admin/index.php', {
                 action: 'winRates',
                 token: this.$store.getters.getUserToken
             }).then(resp=>{
@@ -87,7 +87,7 @@ export default {
                 },0);
             });
 
-        axios.post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php', {
+        axios.post('https://devlink1.tk//bm/vue_lessons/betting_admin/index.php', {
                 action: 'loseRates',
                 token: this.$store.getters.getUserToken
             }).then(resp=>{

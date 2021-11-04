@@ -46,7 +46,7 @@ export default {
             let formData = new FormData();
             formData.append('file', this.file);
 
-            axios.post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php', formData,
+            axios.post('https://devlink1.tk//bm/vue_lessons/betting_admin/index.php', formData,
             {
                 headers: {
                     'Content-Type': 'multipart/form-data'
@@ -92,7 +92,7 @@ export default {
                 return false;
             }
             if(!this.email ){
-                alert('Введи пароль');
+                alert('Введи имейл');
                 return false;
             }
             if(!this.valid(this.name,'name')){
@@ -113,7 +113,7 @@ export default {
             }
             console.log(this.avatarId);
             axios
-                .post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
+                .post('https://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
                     action: 'register',
                     avatarid: this.avatarId,
                     name: this.name,
