@@ -43,10 +43,18 @@ export default {
                 return false;
             }
 
-            console.log(this.$store.dispatch('login',{
+            this.$store.dispatch('login',{
                 login:this.login,
                 password:this.password
-            }));
+            }).then(res=>{
+
+                this.$root.$refs.error_popup.open(res.errorText);
+
+                // setTimeout(()=>{
+                //     this.$root.$refs.error_popup.close();
+                // },2000)
+                
+            })
         }
     }
 }

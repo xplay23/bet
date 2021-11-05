@@ -67,8 +67,8 @@ export default createStore({
       router.push('/');
     },
 
-    login(context,formInfo){
-       axios
+    async login(context,formInfo){
+      return axios
         .post('https://devlink1.tk/bm/vue_lessons/betting_admin/index.php',{
             action: 'login',
             login: formInfo.login,
