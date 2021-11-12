@@ -1,6 +1,9 @@
 <template>
     <div class="bet_page" :class="isEnd ? 'complete_rate' : ''">
-        <my-head>{{name}}</my-head>
+        <my-head>{{name}} {{info?.rateinfo?.id}}</my-head>
+        <pre style="text-align: left;">
+            {{info}}
+        </pre>
 
         <div class="flexwrap">
             <div>

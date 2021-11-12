@@ -77,15 +77,13 @@ export default createStore({
             const data = response.data;
             
             if(data.errorId){
-                // console.log(this,context,this.$root,this.$refs);
-                // this.$refs.error_popup.open(data.errorText);
                 return data;
               }
               context.commit('setToken', data['token']);
               
               context.dispatch('getUser',function(){
                 router.push('/user');
-              })
+              });
               return data;
 
         })

@@ -47,13 +47,13 @@ export default {
                 login:this.login,
                 password:this.password
             }).then(res=>{
+                if(res.errorText){
+                    this.$root.$refs.error_popup.open(res.errorText);
 
-                this.$root.$refs.error_popup.open(res.errorText);
-
-                // setTimeout(()=>{
-                //     this.$root.$refs.error_popup.close();
-                // },2000)
-                
+                    setTimeout(()=>{
+                        this.$root.$refs.error_popup.close();
+                    },2000)
+                }
             })
         }
     }

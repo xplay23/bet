@@ -14,7 +14,7 @@
                     <div v-if="this.$store.getters.getUserInfo?.avatarInfo?.path" class="avatar">
                         <img :src="this.$store.getters.getUserInfo?.avatarInfo?.path" alt="">
                     </div>
-                    <span>{{this.$store.getters.getUserInfo?.name}}</span>
+                    <span>{{this.$store.getters.getUserInfo?.name}} {{this.$store.getters.getUserInfo?.id}} </span>
                 </router-link>
                 <button @click="this.$store.dispatch('unLogin')" class="link_inner">
                     Выйти

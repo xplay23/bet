@@ -1,5 +1,6 @@
 
 <?php
+    $siteURL = 'http://localhost:8080/#/';
     $_POST = json_decode(file_get_contents('php://input'), true);
     function getAction($action){
         return $_POST['action'] === $action;
@@ -83,6 +84,7 @@
  
     function createBet($name,$variations,$count,$participating,$token){
         global $conn;
+        global $siteURL;
         $userID = getUser($token)['id'];
         $result = array();
         if($userID){
@@ -93,6 +95,19 @@
             }
             foreach ($participating as $key => $value) {
                 mysqli_query($conn,"INSERT INTO UserCanRate (userid,rateid) VALUES ('$value',".$id.")");
+
+                $userInfo = mysqli_query($conn,"SELECT * FROM `Users` WHERE id='$value' LIMIT 1");
+                $res = $userInfo->fetch_assoc();
+                $email = $res['email'];
+                if(isset($email) && $email != ''){
+                    $headers = 'From: ratbet@example.com';
+                    mail(
+                        $email,
+                        'Новая ставОчка',
+                        $siteURL."/bet/".$id,
+                        $headers
+                    );
+                }
             }
             $result['errorId'] = 0;
             $result['rateID'] = $id;
@@ -393,7 +408,7 @@
         return $return;
     }
 
-    function register($avatarid,$name,$login,$password){
+    function register($avatarid,$name,$login,$password,$email){
         global $conn;
         $jsonArray = array();
         $result = mysqli_query($conn,"SELECT * FROM `Users` WHERE login='$login' OR name='$name'");
@@ -409,7 +424,7 @@
             return json_encode($toReturn,JSON_UNESCAPED_UNICODE);
         }
         $password = md5($password);
-        $userResult = mysqli_query($conn,"INSERT INTO `Users` (avatarid,name,login,password,createdate) VALUES ('$avatarid','$name','$login','$password','".date('Y-m-d')."')");
+        $userResult = mysqli_query($conn,"INSERT INTO `Users` (avatarid,name,login,password,email,createdate) VALUES ('$avatarid','$name','$login','$password','$email','".date('Y-m-d')."')");
 
         $jsonArray['userid'] = mysqli_insert_id($conn);
 
@@ -423,9 +438,7 @@
         $userID = intval(getUser($token)['id']);
         $avatarid = intval($avatarid);
 
-        var_dump($userID);
-        var_dump($avatarid);
-        var_dump(mysqli_query($conn,"UPDATE `Users` SET avatarid=$avatarid WHERE id=$userID"));
+        mysqli_query($conn,"UPDATE `Users` SET avatarid=$avatarid WHERE id=$userID");
     }
 
     function gen_token() {
@@ -459,6 +472,80 @@
         $toReturn['token'] = $token;
 
         return json_encode($toReturn,JSON_UNESCAPED_UNICODE);
+    } 
+
+    function resetPass($login){
+        global $conn;
+        global $siteURL;
+        $jsonArray = array();
+
+        $result = mysqli_query($conn,"SELECT * FROM `Users` WHERE login='$login' LIMIT 1");
+        
+        $toReturn = array();
+        if($result->num_rows < 1){
+            $toReturn['errorId'] = 5;
+            $resultIn = mysqli_query($conn,"SELECT * FROM `Errors` WHERE id=5  LIMIT 1");
+            foreach ($resultIn as $key => $value) {
+                $toReturn['errorText'] = $value['name'];
+            }
+            return json_encode($toReturn,JSON_UNESCAPED_UNICODE);
+        }
+        $res = $result->fetch_assoc();
+        $email = $res['email'];
+        $id = intval($res['id']);
+        var_dump($id);
+        if(isset($email) && $email != ''){
+            $token = gen_token();
+            
+            mysqli_query($conn,"INSERT INTO TokenEmail (token,userid,createdate) VALUES ('$token',$id,'".date('Y-m-d')."')");
+            $headers = 'From: ratbet@example.com';
+            return mail(
+                $email,
+                'Сброс пароля',
+                $siteURL."/changepass/".$token,
+                $headers
+            );
+        }
+
+        $toReturn['errorId'] = 6;
+        $resultIn = mysqli_query($conn,"SELECT * FROM `Errors` WHERE id=6  LIMIT 1");
+        foreach ($resultIn as $key => $value) {
+            $toReturn['errorText'] = $value['name'];
+        }
+        return json_encode($toReturn,JSON_UNESCAPED_UNICODE);
+        
+
+    }
+
+    function changePass($token,$password){
+        global $conn;
+        $jsonArray = array();
+
+        
+
+        $result = mysqli_query($conn,"SELECT * FROM `TokenEmail` WHERE token='$token' LIMIT 1");
+        
+        $toReturn = array();
+        if($result->num_rows < 1){
+            $toReturn['errorId'] = 5;
+            $resultIn = mysqli_query($conn,"SELECT * FROM `Errors` WHERE id=5  LIMIT 1");
+            foreach ($resultIn as $key => $value) {
+                $toReturn['errorText'] = $value['name'];
+            }
+            return json_encode($toReturn,JSON_UNESCAPED_UNICODE);
+        }
+
+        $password = md5($password);
+
+        $id = intval($result->fetch_assoc()['userid']);
+
+        mysqli_query($conn,"UPDATE `Users` SET password='$password' WHERE id=$id");
+        mysqli_query($conn,"DELETE FROM `TokenEmail` WHERE token='$token'");
+        
+
+
+        return $id;
+
     } 
 
     function unLogin($token){
@@ -500,11 +587,17 @@
     if(getAction('login')){
         echo login($_POST['login'],$_POST['password']);
     }
+    if(getAction('resetPass')){
+        echo resetPass($_POST['login']);
+    }
+    if(getAction('changePass')){
+        echo changePass($_POST['token'],$_POST['password']);
+    }
     if(getAction('unLogin')){
         echo unLogin($_POST['token']);
     }
     if(getAction('register')){
-        echo register($_POST['avatarid'],$_POST['name'],$_POST['login'],$_POST['password']);
+        echo register($_POST['avatarid'],$_POST['name'],$_POST['login'],$_POST['password'],$_POST['email']);
     }
     if(getAction('updateAvatar')){
         updateAvatar($_POST['avatarid'],$_POST['token']);

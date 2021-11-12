@@ -67,7 +67,7 @@ export default {
     }
   // console.log(this.$store.state);
     axios
-      .post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
+      .post('https://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
           action: 'getAllUsers'
       }).then((response)=>{
           const data = response.data;
@@ -115,7 +115,7 @@ export default {
           }
 
           axios
-              .post('http://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
+              .post('https://devlink1.tk//bm/vue_lessons/betting_admin/index.php',{
                   action: 'createBet',
                   token: this.$store.getters.getUserToken,
                   name: this.rateName,

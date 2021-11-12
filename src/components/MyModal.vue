@@ -35,7 +35,7 @@ export default {
 <style scoped>
 .fade-enter-active,
 .fade-leave-active {
-    transition: opacity 3s;
+    transition: opacity .3s;
 }
 .fade-enter,
 .fade-leave-to {
@@ -83,6 +83,7 @@ export default {
     left: 100%;
     width: 1.5rem;
     height: 1.5rem;
+    cursor: pointer;
 }
 
 .cont{
